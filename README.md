@@ -36,4 +36,4 @@
 - подключить бэкенд
 ## Ссылка на проект
 
-https://lenusya23.github.io/russian-travel/
+https://lenusya23.github.io/mesto/
