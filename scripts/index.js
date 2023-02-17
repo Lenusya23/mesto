@@ -44,7 +44,7 @@ buttonCloseProfile.addEventListener("click", closePopup);
 
 // Находим форму в DOM
 let formElement = document.querySelector(".popup__form");
-console.log(formElement);
+
 
 
 // Задаем функцию - обработчик «отправки» формы
