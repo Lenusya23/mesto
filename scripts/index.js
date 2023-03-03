@@ -9,7 +9,7 @@ const formEditProfile = document.querySelector("#popup__form-edit")
 const formAddCard = document.querySelector("#popup__form-add")
 
 // Находим форму в DOM
-let formElement = document.querySelector(".popup__form");
+const formElement = document.querySelector(".popup__form");
 
 ///***************************************************///
 ///          ПОЛЯ ФОРМЫ РЕДАКТИРОВАНИЯ ПРОФИЛЯ        ///
@@ -139,16 +139,16 @@ const imageTitle = document.querySelector(".popup__image-title")
 
 
 //функция открытия попапа с картинкой
-function openImagePopup(cardElement, link) {
-  const cardTitle = cardElement.querySelector(".element__title").textContent
+function openImagePopup(card, link) {
+  const cardTitle = card.querySelector(".element__title").textContent
   imageImg.src = link
   imageImg.alt = cardTitle
   imageTitle.textContent = cardTitle
-  popupImage.classList.add("popup_opened")
+  openPopup(popupImage)
 }
 
 // Создаем переменную для копии массива initialCards
-const placeInfo = initialCards.map(function(item) {
+/*const placeInfo = initialCards.forEach(function(item) {
     return {
         name: item.name,
         link: item.link
@@ -156,40 +156,47 @@ const placeInfo = initialCards.map(function(item) {
 });
 
 function render() {
-    placeInfo.reverse().forEach(renderCard)
-  }
+    placeInfo.forEach(renderCard)
+  }*/
 
-function renderCard({name,link}) {
-    const cardElement = template.querySelector(".element").cloneNode(true)
-    cardElement.querySelector(".element__mask").src = link
-    cardElement.querySelector(".element__title").textContent = name
-    cardElement.querySelector(".element__mask").addEventListener("click", () => {
-        openImagePopup(cardElement, link)
-      })
-    cardElement.querySelector(".element__trash").addEventListener("click", () => {
-        cardElement.remove()
-    })
-    cardElement
-    .querySelector(".element__like-button")
-    .addEventListener("click", () => {
-      if (
-        cardElement
-          .querySelector(".element__like-button")
-          .classList.contains("element__like-button_active")
-      ) {
-        cardElement
-          .querySelector(".element__like-button")
-          .classList.remove("element__like-button_active")
-      } else {
-        cardElement
-          .querySelector(".element__like-button")
-          .classList.add("element__like-button_active")
+  function createCard(value) {
+    const card = template.querySelector(".element").cloneNode(true)
+    if (card) {
+      const title = card.querySelector(".element__title")
+      const mask = card.querySelector(".element__mask")
+      const trash = card.querySelector(".element__trash")
+      const like = card.querySelector(".element__like-button")
+      if (title && mask && trash && like) {
+        title.textContent = value.name
+        mask.src = value.link
+        mask.addEventListener("click", () => {
+          openImagePopup(card, value.link)
+        })
+        trash.addEventListener("click", () => {
+          card.remove()
+        })
+        card
+        .querySelector(".element__like-button")
+        .addEventListener("click", function (evt) {
+          evt.target.classList.toggle("element__like-button_active");
+        });
       }
+    }
+    return card
+  }
+  function renderCard(card, container) {
+    container.prepend(card)
+  }
+  function render() {
+    initialCards.forEach((value) => {
+      const newCard = createCard(value)
+      if (newCard) renderCard(newCard, containerElement)
     })
+  }
+  
+  render()
 
-  containerElement.prepend(cardElement)
-}
-render()
+
 
 
     ///*********************************************///
@@ -221,13 +228,16 @@ function handleFormCardSubmit(event) {
     event.preventDefault()
     const name = nameAddInput.value
     const link = linkAddInput.value
-    renderCard({ name, link })
+    const newCard = createCard({ name, link })
+    if (newCard) renderCard(newCard, containerElement)
+    
     closePopup(popupAddCard)
     formAddCard.reset()
     }
     
     formAddCard.addEventListener("submit", handleFormCardSubmit)
 
+  
 
 
 
